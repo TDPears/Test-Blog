@@ -1,6 +1,6 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const articleRouter = require('./routes/articles')
+import express from 'express'
+import mongoose from 'mongoose'
+import articleRouter from './routes/articles.js'
 const app = express()
 
 mongoose.connect('mongodb://localhost/blog')
@@ -8,6 +8,7 @@ mongoose.connect('mongodb://localhost/blog')
 app.set('view engine', 'ejs')
 
 app.use('/articles',articleRouter)
+app.use(express.urlencoded({ extended: false}))
 
 app.get('/', (req, res) => {
     const articles = [{
