@@ -1,27 +1,22 @@
-import express from 'express'
-import mongoose from 'mongoose'
-import articleRouter from './routes/articles.js'
+const express = require('express')
+const mongoose = require('mongoose')
+const Article = require('./models/article')
+const articleRouter = require('./routes/articles')
+const methodOverride = require('method-override')
 const app = express()
 
 mongoose.connect('mongodb://localhost/blog')
 
 app.set('view engine', 'ejs')
-
-app.use('/articles',articleRouter)
 app.use(express.urlencoded({ extended: false}))
+app.use(methodOverride('_method'))
 
-app.get('/', (req, res) => {
-    const articles = [{
-        title: 'Test Article',
-        createdDate: new Date(),
-        description: 'Test description'
-    },
-    {
-        title: 'Test Article 2',
-        createdDate: new Date(),
-        description: 'Test description 2'
-    }]
+app.get('/', async (req, res) => {
+    const articles = await Article.find().sort({
+        createdDate: 'desc'})
     res.render('articles/index', { articles: articles})
 })
+
+app.use('/articles',articleRouter)
 
 app.listen(5000)
